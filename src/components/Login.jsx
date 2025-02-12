@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../utils/userSlice';
 import {  useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../utils/constant';
@@ -8,8 +8,11 @@ import { BASE_URL } from '../utils/constant';
 const Login = () => {
     const[emailId, setEmailId] = useState("balram@gmail.com");
     const[password,  setPassword] = useState("Balram123*#@");
-   const dispatch = useDispatch();
+    const dispatch = useDispatch();
+    const selector = useSelector(store => store.user);
+  
    const navigate = useNavigate();
+   const[error, setError] = useState();
 
     const  clickHandler = async() => {
         try{
@@ -25,15 +28,18 @@ const Login = () => {
         }
     );
 
-    // console.log(res.data);
+    console.log(res.data);
     dispatch(addUser(res.data));
     navigate('/');
     }
         catch(err){
-            console.error(err);
+            setError(err?.response?.data);
+            // console.error(err);
     }
         
     }
+
+    
    
   return (
     <>
@@ -61,6 +67,9 @@ const Login = () => {
             />
             
             </label> 
+           {/* { console.log("checking")}
+            {!selector?.emailId & <p className='text-red-500'>no credential input!</p> } */}
+            { <p className='text-red-500'>{error}</p>}
 
             <button className='bg-slate-700 text-white w-[8rem] h-[3rem] font-semibold rounded-sm'
                     onClick={()=> clickHandler()}
